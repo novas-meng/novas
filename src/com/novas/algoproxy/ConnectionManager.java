@@ -14,15 +14,10 @@ import static java.net.InetAddress.*;
 public class ConnectionManager {
     private static ConnectionManager connectionManager=null;
     //这个socket是从属性服务获取参数用的
-    private Socket confSocket=null;
-    //这个socket是向运行socket传递参数
-    private Socket runSocket=null;
     private String serverIp=null;
     private int port;
     private ConnectionManager(String serverIp,int port)
     {
-        confSocket=new Socket();
-        runSocket=new Socket();
         this.serverIp=serverIp;
         this.port=port;
     }
@@ -56,17 +51,18 @@ public class ConnectionManager {
     }
     public byte[] sendRun(String msg)
     {
-       return sendMsg(msg,runSocket);
+       return sendMsg(msg,9082);
     }
     public byte[] sendConf(String msg)
     {
-        return sendMsg(msg,confSocket);
+        return sendMsg(msg,9081);
     }
     //发送消息,返回接收到的结果数据
-    public byte[] sendMsg(String msg,Socket socket)
+    public byte[] sendMsg(String msg,int port)
     {
         byte[] resultBytes=null;
         try {
+            Socket socket=new Socket();
             SocketAddress address=new InetSocketAddress(InetAddress.getByName(serverIp),port);
             socket.connect(address);
             System.out.println("msg=" + msg);

@@ -23,18 +23,32 @@ public class AlgoProxy implements proxy{
     public MethodProxy[] getAllMethods() {
         byte[] bytes=connectionManager.sendConf("{1}");
         String response=new String(bytes);
-        ArrayList
+        MethodProxy[] methodProxies=null;
         if(response.charAt(0)=='['&&response.charAt(response.length()-1)==']')
         {
             response=response.substring(1,response.length()-1);
+            String[] args=response.split("-");
+            methodProxies=new MethodProxy[args.length];
+            for(int i=0;i<args.length;i++)
+            {
+                MethodProxy methodProxy=new MethodProxy(args[i]);
+                methodProxies[i]=methodProxy;
+            }
         }
         System.out.println("recvmsg="+new String(bytes));
-        return new MethodProxy[0];
+        return methodProxies;
     }
 
     @Override
     public MethodProxy getMethod(String name) {
-        return null;
+        byte[] bytes=connectionManager.sendConf("{2,"+name+"}");
+        String response=new String(bytes);
+        MethodProxy methodProxy=null;
+        if(response.charAt(0)=='{'&&response.charAt(response.length()-1)=='}')
+        {
+            methodProxy=new MethodProxy(response);
+        }
+        return methodProxy;
     }
 
     @Override
