@@ -15,13 +15,13 @@ public class AlgoProxy implements proxy{
 
     ConnectionManager connectionManager=null;
     final String getAllMsg="{1}";
-    public AlgoProxy(String serverIp,int port)
+    public AlgoProxy(String serverIp,int runport,int confport)
     {
-        connectionManager=ConnectionManager.getConnectionManagerInstance(serverIp,port);
+        connectionManager=ConnectionManager.getConnectionManagerInstance(serverIp,runport,confport);
     }
     @Override
     public MethodProxy[] getAllMethods() {
-        byte[] bytes=connectionManager.sendConf("{1}");
+        byte[] bytes=connectionManager.sendConf(getAllMsg);
         String response=new String(bytes);
         MethodProxy[] methodProxies=null;
         if(response.charAt(0)=='['&&response.charAt(response.length()-1)==']')
@@ -35,7 +35,7 @@ public class AlgoProxy implements proxy{
                 methodProxies[i]=methodProxy;
             }
         }
-        System.out.println("recvmsg="+new String(bytes));
+      //  System.out.println("recvmsg="+new String(bytes));
         return methodProxies;
     }
 
@@ -46,13 +46,24 @@ public class AlgoProxy implements proxy{
         MethodProxy methodProxy=null;
         if(response.charAt(0)=='{'&&response.charAt(response.length()-1)=='}')
         {
+          //  System.out.println("response="+response);
             methodProxy=new MethodProxy(response);
         }
         return methodProxy;
     }
 
     @Override
-    public boolean callMethod(MethodProxy methodProxy) {
-        return false;
+    public long callMethod(MethodProxy methodProxy) {
+        if(methodProxy.isParamsSet())
+        {
+            String request=methodProxy.toRequestString();
+            byte[] res=connectionManager.sendRun(request);
+            if(new String(res).equals("ACCEPTOK"))
+            {
+                System.out.println("run="+new String(res));
+                return methodProxy.getTimeStamp();
+            }
+        }
+        return -1;
     }
 }

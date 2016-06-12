@@ -15,14 +15,17 @@ public class ConnectionManager {
     private static ConnectionManager connectionManager=null;
     //这个socket是从属性服务获取参数用的
     private String serverIp=null;
-    private int port;
-    private ConnectionManager(String serverIp,int port)
+    private int runport;
+    private int confport;
+    private ConnectionManager(String serverIp,int runport,int confport)
     {
         this.serverIp=serverIp;
-        this.port=port;
+        this.runport=runport;
+        this.confport=confport;
     }
     //Socket端传递过来数据格式2_99_参数
-//2表示参数长度的位数，比如99是两位数，99表示参数长度，参数协议为为PARAMS_1或者PARAMS_2_fcm
+//2表示参数长度的位数，比如99是两位数，99表示参数长度，参数协议为为{1}或者{2,fcm}
+    //同时，也用来进行解析运行服务返回的信息，当运行服务成功接受信息，返回ACCEPTOK
     public  byte[] getSocketParams(InputStream is) throws IOException {
         int W=is.read()-48;
         byte[] paramsLengthBytes=new byte[W+2];
@@ -41,21 +44,21 @@ public class ConnectionManager {
         }
         return bytes;
     }
-    public synchronized static ConnectionManager getConnectionManagerInstance(String serverIp,int port)
+    public synchronized static ConnectionManager getConnectionManagerInstance(String serverIp,int runport,int confport)
     {
         if(connectionManager==null)
         {
-            connectionManager=new ConnectionManager(serverIp,port);
+            connectionManager=new ConnectionManager(serverIp,runport,confport);
         }
         return connectionManager;
     }
     public byte[] sendRun(String msg)
     {
-       return sendMsg(msg,9082);
+       return sendMsg(msg,runport);
     }
     public byte[] sendConf(String msg)
     {
-        return sendMsg(msg,9081);
+        return sendMsg(msg,confport);
     }
     //发送消息,返回接收到的结果数据
     public byte[] sendMsg(String msg,int port)
@@ -65,12 +68,12 @@ public class ConnectionManager {
             Socket socket=new Socket();
             SocketAddress address=new InetSocketAddress(InetAddress.getByName(serverIp),port);
             socket.connect(address);
-            System.out.println("msg=" + msg);
+          //  System.out.println("msg=" + msg);
             String length=msg.length()+"";
             String request=length.length()+"_"+length+"_"+msg;
-            System.out.println(request);
+         //   System.out.println(request);
             byte[] bytes=request.getBytes();
-            System.out.println(bytes[0]);
+          //  System.out.println(bytes[0]);
             socket.getOutputStream().write(bytes);
             resultBytes=getSocketParams(socket.getInputStream());
             socket.close();

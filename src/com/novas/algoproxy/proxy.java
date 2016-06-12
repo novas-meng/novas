@@ -6,5 +6,5 @@ package com.novas.algoproxy;
 public interface proxy {
     public MethodProxy[] getAllMethods();
     public MethodProxy getMethod(String name);
-    public boolean callMethod(MethodProxy methodProxy);
+    public long callMethod(MethodProxy methodProxy);
 }
