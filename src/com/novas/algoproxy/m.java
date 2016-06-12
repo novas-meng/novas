@@ -26,7 +26,7 @@ public class m {
         //1:设置参数
         HashMap<String,Object> hashMap=new HashMap<>();
         hashMap.put("m",4);
-        hashMap.put("c",5);
+        hashMap.put("c","a");
         //2：获取方法MethodProxy对象
         MethodProxy proxy=algoProxy.getMethod("fcm");
         //3:将参数赋值给MethodProxy
