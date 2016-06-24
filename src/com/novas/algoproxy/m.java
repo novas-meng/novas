@@ -12,6 +12,9 @@ public class m {
     double a;
     public static void main(String[] args)
     {
+        //double c=1466681732952;
+
+
         AlgoProxy algoProxy=new AlgoProxy("192.168.1.150",9087,9081);
         MethodProxy[] methodProxies=algoProxy.getAllMethods();
         System.out.println(methodProxies.length);
@@ -25,8 +28,10 @@ public class m {
         //以下为具体调用方法
         //1:设置参数
         HashMap<String,Object> hashMap=new HashMap<>();
-        hashMap.put("m",4);
-        hashMap.put("c","a");
+        hashMap.put("m",3);
+        hashMap.put("c",2);
+        hashMap.put("inputPath","/home/novas/data");
+        hashMap.put("outputPath","/home/novas/martix");
         //2：获取方法MethodProxy对象
         MethodProxy proxy=algoProxy.getMethod("fcm");
         //3:将参数赋值给MethodProxy

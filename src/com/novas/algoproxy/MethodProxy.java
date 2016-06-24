@@ -12,7 +12,7 @@ import java.util.Map;
 public class MethodProxy
 {
 
-    private long timestamp;
+    private int timestamp;
     private String methodName;
     //参数和type对应的hashmap
     private HashMap<String,Class> paramsToType=new HashMap<>();
@@ -71,7 +71,7 @@ public class MethodProxy
     public String toRequestString()
     {
         Calendar calendar=Calendar.getInstance();
-        timestamp=calendar.getTime().getTime();
+        timestamp=(int)calendar.getTime().getTime();
 
         return timestamp+" "+methodName+" "+requestBuilder.toString();
     }
